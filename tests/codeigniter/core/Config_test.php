@@ -24,18 +24,18 @@ class Config_test extends CI_TestCase {
 		$this->assertEquals($this->cfg['base_url'], $this->config->item('base_url'));
 
 		// Bad Config value
-		$this->assertFalse($this->config->item('no_good_item'));
+		$this->assertNull($this->config->item('no_good_item'));
 
 		// Index
-		$this->assertFalse($this->config->item('no_good_item', 'bad_index'));
-		$this->assertFalse($this->config->item('no_good_item', 'default'));
+		$this->assertNull($this->config->item('no_good_item', 'bad_index'));
+		$this->assertNull($this->config->item('no_good_item', 'default'));
 	}
 
 	// --------------------------------------------------------------------
 
 	public function test_set_item()
 	{
-		$this->assertFalse($this->config->item('not_yet_set'));
+		$this->assertNull($this->config->item('not_yet_set'));
 
 		$this->config->set_item('not_yet_set', 'is set');
 		$this->assertEquals('is set', $this->config->item('not_yet_set'));
@@ -46,7 +46,7 @@ class Config_test extends CI_TestCase {
 	public function test_slash_item()
 	{
 		// Bad Config value
-		$this->assertFalse($this->config->slash_item('no_good_item'));
+		$this->assertNull($this->config->slash_item('no_good_item'));
 
 		$this->assertEquals($this->cfg['base_url'], $this->config->slash_item('base_url'));
 		$this->assertEquals($this->cfg['subclass_prefix'].'/', $this->config->slash_item('subclass_prefix'));
@@ -76,20 +76,31 @@ class Config_test extends CI_TestCase {
 
 		// Capture server vars
 		$old_host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : NULL;
-		$old_script = isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : NULL;
+		$old_script_name = isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : NULL;
+		$old_script_filename = $_SERVER['SCRIPT_FILENAME'];
 		$old_https = isset($_SERVER['HTTPS']) ? $_SERVER['HTTPS'] : NULL;
 
 		// Setup server vars for detection
 		$host = 'test.com';
-		$path = '/path/';
+		$path = '/';
 		$script = 'base_test.php';
 		$_SERVER['HTTP_HOST'] = $host;
 		$_SERVER['SCRIPT_NAME'] = $path.$script;
+		$_SERVER['SCRIPT_FILENAME'] = '/foo/bar/'.$script;
 
 		// Rerun constructor
 		$this->config = new $cls;
 
-		// Test plain detected
+		// Test plain detected (root)
+		$this->assertEquals('http://'.$host.$path, $this->config->base_url());
+
+		// Rerun constructor
+		$path = '/path/';
+		$_SERVER['SCRIPT_NAME'] = $path.$script;
+		$_SERVER['SCRIPT_FILENAME'] = '/foo/bar/'.$path.$script;
+		$this->config = new $cls;
+
+		// Test plain detected (subfolder)
 		$this->assertEquals('http://'.$host.$path, $this->config->base_url());
 
 		// Rerun constructor
@@ -102,10 +113,12 @@ class Config_test extends CI_TestCase {
 		// Restore server vars
 		if ($old_host === NULL) unset($_SERVER['HTTP_HOST']);
 		else $_SERVER['HTTP_HOST'] = $old_host;
-		if ($old_script === NULL) unset($_SERVER['SCRIPT_NAME']);
-		else $_SERVER['SCRIPT_NAME'] = $old_script;
+		if ($old_script_name === NULL) unset($_SERVER['SCRIPT_NAME']);
+		else $_SERVER['SCRIPT_NAME'] = $old_script_name;
 		if ($old_https === NULL) unset($_SERVER['HTTPS']);
 		else $_SERVER['HTTPS'] = $old_https;
+
+		$_SERVER['SCRIPT_FILENAME'] = $old_script_filename;
 	}
 
 	// --------------------------------------------------------------------
@@ -180,7 +193,7 @@ class Config_test extends CI_TestCase {
 		$cfg = array(
 			'one' => 'prime',
 			'two' => 2,
-			'three' => true
+			'three' => TRUE
 		);
 		$this->ci_vfs_create($file.'.php', '<?php $config = '.var_export($cfg, TRUE).';', $this->ci_app_root, 'config');
 		$this->assertTrue($this->config->load($file, TRUE));

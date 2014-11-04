@@ -4,24 +4,35 @@
  *
  * An open source application development framework for PHP 5.2.4 or newer
  *
- * NOTICE OF LICENSE
+ * This content is released under the MIT License (MIT)
  *
- * Licensed under the Open Software License version 3.0
+ * Copyright (c) 2014, British Columbia Institute of Technology
  *
- * This source file is subject to the Open Software License (OSL 3.0) that is
- * bundled with this package in the files license.txt / license.rst.  It is
- * also available through the world wide web at this URL:
- * http://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to obtain it
- * through the world wide web, please send an email to
- * licensing@ellislab.com so we can send you a copy immediately.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * @package		CodeIgniter
- * @author		EllisLab Dev Team
- * @copyright	Copyright (c) 2008 - 2013, EllisLab, Inc. (http://ellislab.com/)
- * @license		http://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
- * @link		http://codeigniter.com
- * @since		Version 1.0
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @package	CodeIgniter
+ * @author	EllisLab Dev Team
+ * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
+ * @copyright	Copyright (c) 2014, British Columbia Institute of Technology (http://bcit.ca/)
+ * @license	http://opensource.org/licenses/MIT	MIT License
+ * @link	http://codeigniter.com
+ * @since	Version 1.0.0
  * @filesource
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -143,6 +154,15 @@ class CI_User_agent {
 	 * @var string
 	 */
 	public $robot = '';
+
+	/**
+	 * HTTP Referer
+	 *
+	 * @var	mixed
+	 */
+	public $referer;
+
+	// --------------------------------------------------------------------
 
 	/**
 	 * Constructor
@@ -282,7 +302,7 @@ class CI_User_agent {
 		{
 			foreach ($this->browsers as $key => $val)
 			{
-				if (preg_match('|'.preg_quote($key).'.*?([0-9\.]+)|i', $this->agent, $match))
+				if (preg_match('|'.$key.'.*?([0-9\.]+)|i', $this->agent, $match))
 				{
 					$this->is_browser = TRUE;
 					$this->version = $match[1];
@@ -358,7 +378,7 @@ class CI_User_agent {
 	{
 		if ((count($this->languages) === 0) && ! empty($_SERVER['HTTP_ACCEPT_LANGUAGE']))
 		{
-			$this->languages = explode(',', preg_replace('/(;q=[0-9\.]+)/i', '', strtolower(trim($_SERVER['HTTP_ACCEPT_LANGUAGE']))));
+			$this->languages = explode(',', preg_replace('/(;\s?q=[0-9\.]+)|\s/i', '', strtolower(trim($_SERVER['HTTP_ACCEPT_LANGUAGE']))));
 		}
 
 		if (count($this->languages) === 0)
@@ -378,7 +398,7 @@ class CI_User_agent {
 	{
 		if ((count($this->charsets) === 0) && ! empty($_SERVER['HTTP_ACCEPT_CHARSET']))
 		{
-			$this->charsets = explode(',', preg_replace('/(;q=.+)/i', '', strtolower(trim($_SERVER['HTTP_ACCEPT_CHARSET']))));
+			$this->charsets = explode(',', preg_replace('/(;\s?q=.+)|\s/i', '', strtolower(trim($_SERVER['HTTP_ACCEPT_CHARSET']))));
 		}
 
 		if (count($this->charsets) === 0)
@@ -471,13 +491,22 @@ class CI_User_agent {
 	 */
 	public function is_referral()
 	{
-		if (empty($_SERVER['HTTP_REFERER']))
+		if ( ! isset($this->referer))
 		{
-			return FALSE;
+			if (empty($_SERVER['HTTP_REFERER']))
+			{
+				$this->referer = FALSE;
+			}
+			else
+			{
+				$referer_host = @parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
+				$own_host = parse_url(config_item('base_url'), PHP_URL_HOST);
+
+				$this->referer = ($referer_host && $referer_host !== $own_host);
+			}
 		}
 
-		$referer = parse_url($_SERVER['HTTP_REFERER']);
-		return ! (empty($referer['host']) && strpos(config_item('base_url'), $referer['host']) !== FALSE);
+		return $this->referer;
 	}
 
 	// --------------------------------------------------------------------
@@ -621,6 +650,34 @@ class CI_User_agent {
 	public function accept_charset($charset = 'utf-8')
 	{
 		return in_array(strtolower($charset), $this->charsets(), TRUE);
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Parse a custom user-agent string
+	 *
+	 * @param	string	$string
+	 * @return	void
+	 */
+	public function parse($string)
+	{
+		// Reset values
+		$this->is_browser = FALSE;
+		$this->is_robot = FALSE;
+		$this->is_mobile = FALSE;
+		$this->browser = '';
+		$this->version = '';
+		$this->mobile = '';
+		$this->robot = '';
+
+		// Set the new user-agent string and parse it, unless empty
+		$this->agent = $string;
+
+		if ( ! empty($string))
+		{
+			$this->_compile_data();
+		}
 	}
 
 }

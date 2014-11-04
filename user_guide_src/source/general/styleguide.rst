@@ -71,12 +71,41 @@ identify a file as being complete and not truncated.
 
 	echo "Here's my code!";
 
-	/* End of file myfile.php */
+	/* End of file Myfile.php */
 	/* Location: ./system/modules/mymodule/myfile.php */
 
 .. note:: There should be no empty line or newline character(s) following
 	the closing comments. If you happen to see one when
 	submitting a pull request, please check your IDE settings and fix it.
+
+File Naming
+===========
+
+Class files must be named in a Ucfirst-like manner, while any other file name
+(configurations, views, generic scripts, etc.) should be in all lowercase.
+
+**INCORRECT**::
+
+	somelibrary.php
+	someLibrary.php
+	SOMELIBRARY.php
+	Some_Library.php
+
+	Application_config.php
+	Application_Config.php
+	applicationConfig.php
+
+**CORRECT**::
+
+	Somelibrary.php
+	Some_library.php
+
+	applicationconfig.php
+	application_config.php
+
+Furthermore, class file names should match the name of the class itself.
+For example, if you have a class named `Myclass`, then its filename must
+be **Myclass.php**.
 
 Class and Method Naming
 =======================
@@ -536,7 +565,7 @@ the ability to change this in the php.ini, you can often enable it with::
 	ini_set('display_errors', 1);
 
 .. note:: Setting the `display_errors
-	<http://php.net/manual/en/ref.errorfunc.php#ini.display-errors>`_
+	<http://php.net/manual/en/errorfunc.configuration.php#ini.display-errors>`_
 	setting with ``ini_set()`` at runtime is not identical to having
 	it enabled in the PHP environment. Namely, it will not have any
 	effect if the script has fatal errors.

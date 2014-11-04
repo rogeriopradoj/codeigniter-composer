@@ -81,3 +81,10 @@ Key                     Description                                             
 **query_toggle_count**  The number of queries after which the query block will default to   25
                         hidden.
 ======================= =================================================================== ========
+
+.. note:: Disabling the :doc:`save_queries </database/configuration>` setting in
+	your database configuration will also effectively disable profiling for
+	database queries and render the 'queries' setting above useless. You can
+	optionally override this setting with ``$this->db->save_queries = TRUE;``.
+	Without this setting you won't be able to view the queries or the
+	`last_query <database/helpers>`.

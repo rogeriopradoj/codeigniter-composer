@@ -4,24 +4,35 @@
  *
  * An open source application development framework for PHP 5.2.4 or newer
  *
- * NOTICE OF LICENSE
+ * This content is released under the MIT License (MIT)
  *
- * Licensed under the Open Software License version 3.0
+ * Copyright (c) 2014, British Columbia Institute of Technology
  *
- * This source file is subject to the Open Software License (OSL 3.0) that is
- * bundled with this package in the files license.txt / license.rst.  It is
- * also available through the world wide web at this URL:
- * http://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to obtain it
- * through the world wide web, please send an email to
- * licensing@ellislab.com so we can send you a copy immediately.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * @package		CodeIgniter
- * @author		EllisLab Dev Team
- * @copyright	Copyright (c) 2008 - 2013, EllisLab, Inc. (http://ellislab.com/)
- * @license		http://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
- * @link		http://codeigniter.com
- * @since		Version 1.0
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @package	CodeIgniter
+ * @author	EllisLab Dev Team
+ * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
+ * @copyright	Copyright (c) 2014, British Columbia Institute of Technology (http://bcit.ca/)
+ * @license	http://opensource.org/licenses/MIT	MIT License
+ * @link	http://codeigniter.com
+ * @since	Version 1.0.0
  * @filesource
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -165,6 +176,8 @@ class CI_Session_cookie extends CI_Session_driver {
 	 */
 	public $now;
 
+	// ------------------------------------------------------------------------
+
 	/**
 	 * Default userdata keys
 	 *
@@ -183,6 +196,15 @@ class CI_Session_cookie extends CI_Session_driver {
 	 * @var	bool
 	 */
 	protected $data_dirty = FALSE;
+
+	/**
+	 * Standardize newlines flag
+	 *
+	 * @var	bool
+	 */
+	protected $_standardize_newlines;
+
+	// ------------------------------------------------------------------------
 
 	/**
 	 * Initialize session driver object
@@ -209,8 +231,10 @@ class CI_Session_cookie extends CI_Session_driver {
 			'sess_time_to_update',
 			'time_reference',
 			'cookie_prefix',
-			'encryption_key'
+			'encryption_key',
 		);
+
+		$this->_standardize_newlines = (bool) config_item('standardize_newlines');
 
 		foreach ($prefs as $key)
 		{
@@ -227,7 +251,7 @@ class CI_Session_cookie extends CI_Session_driver {
 		// Do we need encryption? If so, load the encryption class
 		if ($this->sess_encrypt_cookie === TRUE)
 		{
-			$this->CI->load->library('encrypt');
+			$this->CI->load->library('encryption');
 		}
 
 		// Check for database
@@ -370,38 +394,50 @@ class CI_Session_cookie extends CI_Session_driver {
 			return FALSE;
 		}
 
-		$len = strlen($session) - 40;
-
-		if ($len < 0)
-		{
-			log_message('debug', 'The session cookie was not signed.');
-			return FALSE;
-		}
-
-		// Check cookie authentication
-		$hmac	 = substr($session, $len);
-		$session = substr($session, 0, $len);
-
-		if ($hmac !== hash_hmac('sha1', $session, $this->encryption_key))
-		{
-			log_message('error', 'The session cookie data did not match what was expected.');
-			$this->sess_destroy();
-			return FALSE;
-		}
-
-		// Check for encryption
 		if ($this->sess_encrypt_cookie === TRUE)
 		{
-			// Decrypt the cookie data
-			$session = $this->CI->encrypt->decode($session);
+			$session = $this->CI->encryption->decrypt($session);
+			if ($session === FALSE)
+			{
+				log_message('error', 'Session: Unable to decrypt the session cookie, possibly due to a HMAC mismatch.');
+				return FALSE;
+			}
+		}
+		else
+		{
+			if (($len = strlen($session) - 40) <= 0)
+			{
+				log_message('error', 'Session: The session cookie was not signed.');
+				return FALSE;
+			}
+
+			// Check cookie authentication
+			$hmac = substr($session, $len);
+			$session = substr($session, 0, $len);
+
+			// Time-attack-safe comparison
+			$hmac_check = hash_hmac('sha1', $session, $this->encryption_key);
+			$diff = 0;
+			for ($i = 0; $i < 40; $i++)
+			{
+				$diff |= ord($hmac[$i]) ^ ord($hmac_check[$i]);
+			}
+
+			if ($diff !== 0)
+			{
+				log_message('error', 'Session: HMAC mismatch. The session cookie data did not match what was expected.');
+				$this->sess_destroy();
+				return FALSE;
+			}
 		}
 
 		// Unserialize the session array
-		$session = $this->_unserialize($session);
+		$session = @unserialize($session);
 
 		// Is the session data we unserialized an array with the correct format?
 		if ( ! is_array($session) OR ! isset($session['session_id'], $session['ip_address'], $session['user_agent'], $session['last_activity']))
 		{
+			log_message('debug', 'Session: Wrong cookie data format');
 			$this->sess_destroy();
 			return FALSE;
 		}
@@ -409,6 +445,7 @@ class CI_Session_cookie extends CI_Session_driver {
 		// Is the session current?
 		if (($session['last_activity'] + $this->sess_expiration) < $this->now OR $session['last_activity'] > $this->now)
 		{
+			log_message('debug', 'Session: Expired');
 			$this->sess_destroy();
 			return FALSE;
 		}
@@ -416,6 +453,7 @@ class CI_Session_cookie extends CI_Session_driver {
 		// Does the IP match?
 		if ($this->sess_match_ip === TRUE && $session['ip_address'] !== $this->CI->input->ip_address())
 		{
+			log_message('debug', 'Session: IP address mismatch');
 			$this->sess_destroy();
 			return FALSE;
 		}
@@ -424,6 +462,7 @@ class CI_Session_cookie extends CI_Session_driver {
 		if ($this->sess_match_useragent === TRUE &&
 			trim($session['user_agent']) !== trim(substr($this->CI->input->user_agent(), 0, 120)))
 		{
+			log_message('debug', 'Session: User Agent string mismatch');
 			$this->sess_destroy();
 			return FALSE;
 		}
@@ -459,6 +498,7 @@ class CI_Session_cookie extends CI_Session_driver {
 			// No result? Kill it!
 			if (empty($query) OR $query->num_rows() === 0)
 			{
+				log_message('debug', 'Session: No match found in our database');
 				$this->sess_destroy();
 				return FALSE;
 			}
@@ -467,7 +507,7 @@ class CI_Session_cookie extends CI_Session_driver {
 			$row = $query->row();
 			if ( ! empty($row->user_data))
 			{
-				$custom_data = $this->_unserialize($row->user_data);
+				$custom_data = unserialize(trim($row->user_data));
 
 				if (is_array($custom_data))
 				{
@@ -497,6 +537,8 @@ class CI_Session_cookie extends CI_Session_driver {
 			'user_agent'	=> trim(substr($this->CI->input->user_agent(), 0, 120)),
 			'last_activity'	=> $this->now,
 		);
+
+		log_message('debug', 'Session: Creating new session ('.$this->userdata['session_id'].')');
 
 		// Check for database
 		if ($this->sess_use_database === TRUE)
@@ -536,6 +578,8 @@ class CI_Session_cookie extends CI_Session_driver {
 		{
 			// Get new id
 			$this->userdata['session_id'] = $this->_make_sess_id();
+
+			log_message('debug', 'Session: Regenerate ID');
 		}
 
 		// Check for database
@@ -599,7 +643,7 @@ class CI_Session_cookie extends CI_Session_driver {
 			if ( ! empty($userdata))
 			{
 				// Serialize the custom data array so we can store it
-				$set['user_data'] = $this->_serialize($userdata);
+				$set['user_data'] = serialize($userdata);
 			}
 
 			// Reset query builder values.
@@ -686,16 +730,28 @@ class CI_Session_cookie extends CI_Session_driver {
 				? array_intersect_key($this->userdata, $this->defaults)
 				: $this->userdata;
 
+		// The Input class will do this and since we use HMAC verification,
+		// unless we standardize here as well, the hash won't match.
+		if ($this->_standardize_newlines)
+		{
+			foreach (array_keys($this->userdata) as $key)
+			{
+				$this->userdata[$key] = preg_replace('/(?:\r\n|[\r\n])/', PHP_EOL, $this->userdata[$key]);
+			}
+		}
+
 		// Serialize the userdata for the cookie
-		$cookie_data = $this->_serialize($cookie_data);
+		$cookie_data = serialize($cookie_data);
 
 		if ($this->sess_encrypt_cookie === TRUE)
 		{
-			$cookie_data = $this->CI->encrypt->encode($cookie_data);
+			$cookie_data = $this->CI->encryption->encrypt($cookie_data);
 		}
-
-		// Require message authentication
-		$cookie_data .= hash_hmac('sha1', $cookie_data, $this->encryption_key);
+		else
+		{
+			// Require message authentication
+			$cookie_data .= hash_hmac('sha1', $cookie_data, $this->encryption_key);
+		}
 
 		$expire = ($this->sess_expire_on_close === TRUE) ? 0 : $this->sess_expiration + time();
 
@@ -728,93 +784,6 @@ class CI_Session_cookie extends CI_Session_driver {
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Serialize an array
-	 *
-	 * This function first converts any slashes found in the array to a temporary
-	 * marker, so when it gets unserialized the slashes will be preserved
-	 *
-	 * @param	mixed	Data to serialize
-	 * @return	string	Serialized data
-	 */
-	protected function _serialize($data)
-	{
-		if (is_array($data))
-		{
-			array_walk_recursive($data, array(&$this, '_escape_slashes'));
-		}
-		elseif (is_string($data))
-		{
-			$data = str_replace('\\', '{{slash}}', $data);
-		}
-
-		return serialize($data);
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Escape slashes
-	 *
-	 * This function converts any slashes found into a temporary marker
-	 *
-	 * @param	string	Value
-	 * @param	string	Key
-	 * @return	void
-	 */
-	protected function _escape_slashes(&$val, $key)
-	{
-		if (is_string($val))
-		{
-			$val = str_replace('\\', '{{slash}}', $val);
-		}
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Unserialize
-	 *
-	 * This function unserializes a data string, then converts any
-	 * temporary slash markers back to actual slashes
-	 *
-	 * @param	mixed	Data to unserialize
-	 * @return	mixed	Unserialized data
-	 */
-	protected function _unserialize($data)
-	{
-		$data = @unserialize(trim($data));
-
-		if (is_array($data))
-		{
-			array_walk_recursive($data, array(&$this, '_unescape_slashes'));
-			return $data;
-		}
-
-		return is_string($data) ? str_replace('{{slash}}', '\\', $data) : $data;
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Unescape slashes
-	 *
-	 * This function converts any slash markers back into actual slashes
-	 *
-	 * @param	string	Value
-	 * @param	string	Key
-	 * @return	void
-	 */
-	protected function _unescape_slashes(&$val, $key)
-	{
-		if (is_string($val))
-		{
-	 		$val = str_replace('{{slash}}', '\\', $val);
-		}
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
 	 * Garbage collection
 	 *
 	 * This deletes expired session rows from database
@@ -832,7 +801,7 @@ class CI_Session_cookie extends CI_Session_driver {
 		$probability = ini_get('session.gc_probability');
 		$divisor = ini_get('session.gc_divisor');
 
-		if ((mt_rand(0, $divisor) / $divisor) < $probability)
+		if (mt_rand(1, $divisor) <= $probability)
 		{
 			$expire = $this->now - $this->sess_expiration;
 			$this->CI->db->delete($this->sess_table_name, 'last_activity < '.$expire);

@@ -4,24 +4,35 @@
  *
  * An open source application development framework for PHP 5.2.4 or newer
  *
- * NOTICE OF LICENSE
+ * This content is released under the MIT License (MIT)
  *
- * Licensed under the Open Software License version 3.0
+ * Copyright (c) 2014, British Columbia Institute of Technology
  *
- * This source file is subject to the Open Software License (OSL 3.0) that is
- * bundled with this package in the files license.txt / license.rst.  It is
- * also available through the world wide web at this URL:
- * http://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to obtain it
- * through the world wide web, please send an email to
- * licensing@ellislab.com so we can send you a copy immediately.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * @package		CodeIgniter
- * @author		EllisLab Dev Team
- * @copyright	Copyright (c) 2008 - 2013, EllisLab, Inc. (http://ellislab.com/)
- * @license		http://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
- * @link		http://codeigniter.com
- * @since		Version 1.0
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @package	CodeIgniter
+ * @author	EllisLab Dev Team
+ * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
+ * @copyright	Copyright (c) 2014, British Columbia Institute of Technology (http://bcit.ca/)
+ * @license	http://opensource.org/licenses/MIT	MIT License
+ * @link	http://codeigniter.com
+ * @since	Version 1.0.0
  * @filesource
  */
 
@@ -61,14 +72,21 @@ switch (ENVIRONMENT)
 
 	case 'testing':
 	case 'production':
-		error_reporting(E_ALL ^ E_NOTICE ^ E_DEPRECATED ^ E_STRICT);
 		ini_set('display_errors', 0);
+		if (version_compare(PHP_VERSION, '5.3', '>='))
+		{
+			error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT & ~E_USER_NOTICE & ~E_USER_DEPRECATED);
+		}
+		else
+		{
+			error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_USER_NOTICE);
+		}
 	break;
 
 	default:
 		header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
 		echo 'The application environment is not set correctly.';
-		exit(1); // EXIT_* constants not yet defined; 1 is EXIT_ERROR, a generic error.
+		exit(1); // EXIT_ERROR
 }
 
 /*
@@ -77,7 +95,7 @@ switch (ENVIRONMENT)
  *---------------------------------------------------------------
  *
  * This variable must contain the name of your "system" folder.
- * Include the path if the folder is not in the same  directory
+ * Include the path if the folder is not in the same directory
  * as this file.
  */
 	$system_path = 'system';
@@ -192,7 +210,7 @@ switch (ENVIRONMENT)
 	{
 		header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
 		echo 'Your system folder path does not appear to be set correctly. Please open the following file and correct this: '.pathinfo(__FILE__, PATHINFO_BASENAME);
-		exit(3); // EXIT_* constants not yet defined; 3 is EXIT_CONFIG.
+		exit(3); // EXIT_CONFIG
 	}
 
 /*
@@ -220,32 +238,32 @@ switch (ENVIRONMENT)
 			$application_folder = $_temp;
 		}
 
-		define('APPPATH', $application_folder.'/');
+		define('APPPATH', $application_folder.DIRECTORY_SEPARATOR);
 	}
 	else
 	{
-		if ( ! is_dir(BASEPATH.$application_folder.'/'))
+		if ( ! is_dir(BASEPATH.$application_folder.DIRECTORY_SEPARATOR))
 		{
 			header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
 			echo 'Your application folder path does not appear to be set correctly. Please open the following file and correct this: '.SELF;
-			exit(3); // EXIT_* constants not yet defined; 3 is EXIT_CONFIG.
+			exit(3); // EXIT_CONFIG
 		}
 
-		define('APPPATH', BASEPATH.$application_folder.'/');
+		define('APPPATH', BASEPATH.$application_folder.DIRECTORY_SEPARATOR);
 	}
 
 	// The path to the "views" folder
 	if ( ! is_dir($view_folder))
 	{
-		if ( ! empty($view_folder) && is_dir(APPPATH.$view_folder.'/'))
+		if ( ! empty($view_folder) && is_dir(APPPATH.$view_folder.DIRECTORY_SEPARATOR))
 		{
 			$view_folder = APPPATH.$view_folder;
 		}
-		elseif ( ! is_dir(APPPATH.'views/'))
+		elseif ( ! is_dir(APPPATH.'views'.DIRECTORY_SEPARATOR))
 		{
 			header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
 			echo 'Your view folder path does not appear to be set correctly. Please open the following file and correct this: '.SELF;
-			exit(3); // EXIT_* constants not yet defined; 3 is EXIT_CONFIG.
+			exit(3); // EXIT_CONFIG
 		}
 		else
 		{
@@ -255,11 +273,11 @@ switch (ENVIRONMENT)
 
 	if (($_temp = realpath($view_folder)) !== FALSE)
 	{
-		$view_folder = $_temp.'/';
+		$view_folder = $_temp.DIRECTORY_SEPARATOR;
 	}
 	else
 	{
-		$view_folder = rtrim($view_folder, '/').'/';
+		$view_folder = rtrim($view_folder, '/\\').DIRECTORY_SEPARATOR;
 	}
 
 	define('VIEWPATH', $view_folder);

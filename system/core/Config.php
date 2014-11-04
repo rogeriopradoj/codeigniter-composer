@@ -4,24 +4,35 @@
  *
  * An open source application development framework for PHP 5.2.4 or newer
  *
- * NOTICE OF LICENSE
+ * This content is released under the MIT License (MIT)
  *
- * Licensed under the Open Software License version 3.0
+ * Copyright (c) 2014, British Columbia Institute of Technology
  *
- * This source file is subject to the Open Software License (OSL 3.0) that is
- * bundled with this package in the files license.txt / license.rst.  It is
- * also available through the world wide web at this URL:
- * http://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to obtain it
- * through the world wide web, please send an email to
- * licensing@ellislab.com so we can send you a copy immediately.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * @package		CodeIgniter
- * @author		EllisLab Dev Team
- * @copyright	Copyright (c) 2008 - 2013, EllisLab, Inc. (http://ellislab.com/)
- * @license		http://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
- * @link		http://codeigniter.com
- * @since		Version 1.0
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @package	CodeIgniter
+ * @author	EllisLab Dev Team
+ * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
+ * @copyright	Copyright (c) 2014, British Columbia Institute of Technology (http://bcit.ca/)
+ * @license	http://opensource.org/licenses/MIT	MIT License
+ * @link	http://codeigniter.com
+ * @since	Version 1.0.0
  * @filesource
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -76,11 +87,12 @@ class CI_Config {
 		// Set the base_url automatically if none was provided
 		if (empty($this->config['base_url']))
 		{
-			if (isset($_SERVER['HTTP_HOST']))
+			// The regular expression is only a basic validation for a valid "Host" header.
+			// It's not exhaustive, only checks for valid characters.
+			if (isset($_SERVER['HTTP_HOST']) && preg_match('/^((\[[0-9a-f:]+\])|(\d{1,3}(\.\d{1,3}){3})|[a-z0-9\-\.]+)(:\d+)?$/i', $_SERVER['HTTP_HOST']))
 			{
-				$base_url = is_https() ? 'https' : 'http';
-				$base_url .= '://'.$_SERVER['HTTP_HOST']
-					.str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
+				$base_url = (is_https() ? 'https' : 'http').'://'.$_SERVER['HTTP_HOST']
+					.substr($_SERVER['SCRIPT_NAME'], 0, strpos($_SERVER['SCRIPT_NAME'], basename($_SERVER['SCRIPT_FILENAME'])));
 			}
 			else
 			{
@@ -104,10 +116,11 @@ class CI_Config {
 	public function load($file = '', $use_sections = FALSE, $fail_gracefully = FALSE)
 	{
 		$file = ($file === '') ? 'config' : str_replace('.php', '', $file);
-		$found = $loaded = FALSE;
+		$loaded = FALSE;
 
 		foreach ($this->_config_paths as $path)
 		{
+			$found = FALSE;
 			foreach (array(ENVIRONMENT.'/'.$file, $file) as $location)
 			{
 				$file_path = $path.'config/'.$location.'.php';
@@ -184,16 +197,16 @@ class CI_Config {
 	 *
 	 * @param	string	$item	Config item name
 	 * @param	string	$index	Index name
-	 * @return	string|bool	The configuration item or FALSE on failure
+	 * @return	string|null	The configuration item or NULL if the item doesn't exist
 	 */
 	public function item($item, $index = '')
 	{
 		if ($index == '')
 		{
-			return isset($this->config[$item]) ? $this->config[$item] : FALSE;
+			return isset($this->config[$item]) ? $this->config[$item] : NULL;
 		}
 
-		return isset($this->config[$index], $this->config[$index][$item]) ? $this->config[$index][$item] : FALSE;
+		return isset($this->config[$index], $this->config[$index][$item]) ? $this->config[$index][$item] : NULL;
 	}
 
 	// --------------------------------------------------------------------
@@ -202,13 +215,13 @@ class CI_Config {
 	 * Fetch a config file item with slash appended (if not empty)
 	 *
 	 * @param	string		$item	Config item name
-	 * @return	string|bool	The configuration item or FALSE on failure
+	 * @return	string|null	The configuration item or NULL if the item doesn't exist
 	 */
 	public function slash_item($item)
 	{
 		if ( ! isset($this->config[$item]))
 		{
-			return FALSE;
+			return NULL;
 		}
 		elseif (trim($this->config[$item]) === '')
 		{
@@ -228,13 +241,21 @@ class CI_Config {
 	 * @uses	CI_Config::_uri_string()
 	 *
 	 * @param	string|string[]	$uri	URI string or an array of segments
+	 * @param	string	$protocol
 	 * @return	string
 	 */
-	public function site_url($uri = '')
+	public function site_url($uri = '', $protocol = NULL)
 	{
+		$base_url = $this->slash_item('base_url');
+
+		if (isset($protocol))
+		{
+			$base_url = $protocol.substr($base_url, strpos($base_url, '://'));
+		}
+
 		if (empty($uri))
 		{
-			return $this->slash_item('base_url').$this->item('index_page');
+			return $base_url.$this->item('index_page');
 		}
 
 		$uri = $this->_uri_string($uri);
@@ -255,14 +276,14 @@ class CI_Config {
 				}
 			}
 
-			return $this->slash_item('base_url').$this->slash_item('index_page').$uri;
+			return $base_url.$this->slash_item('index_page').$uri;
 		}
 		elseif (strpos($uri, '?') === FALSE)
 		{
 			$uri = '?'.$uri;
 		}
 
-		return $this->slash_item('base_url').$this->item('index_page').$uri;
+		return $base_url.$this->item('index_page').$uri;
 	}
 
 	// -------------------------------------------------------------
@@ -275,11 +296,19 @@ class CI_Config {
 	 * @uses	CI_Config::_uri_string()
 	 *
 	 * @param	string|string[]	$uri	URI string or an array of segments
+	 * @param	string	$protocol
 	 * @return	string
 	 */
-	public function base_url($uri = '')
+	public function base_url($uri = '', $protocol = NULL)
 	{
-		return $this->slash_item('base_url').ltrim($this->_uri_string($uri), '/');
+		$base_url = $this->slash_item('base_url');
+
+		if (isset($protocol))
+		{
+			$base_url = $protocol.substr($base_url, strpos($base_url, '://'));
+		}
+
+		return $base_url.ltrim($this->_uri_string($uri), '/');
 	}
 
 	// -------------------------------------------------------------
@@ -316,6 +345,7 @@ class CI_Config {
 	/**
 	 * System URL
 	 *
+	 * @deprecated	3.0.0	Encourages insecure practices
 	 * @return	string
 	 */
 	public function system_url()

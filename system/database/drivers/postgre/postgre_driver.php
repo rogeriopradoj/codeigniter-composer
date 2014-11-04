@@ -4,24 +4,35 @@
  *
  * An open source application development framework for PHP 5.2.4 or newer
  *
- * NOTICE OF LICENSE
+ * This content is released under the MIT License (MIT)
  *
- * Licensed under the Open Software License version 3.0
+ * Copyright (c) 2014, British Columbia Institute of Technology
  *
- * This source file is subject to the Open Software License (OSL 3.0) that is
- * bundled with this package in the files license.txt / license.rst.  It is
- * also available through the world wide web at this URL:
- * http://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to obtain it
- * through the world wide web, please send an email to
- * licensing@ellislab.com so we can send you a copy immediately.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * @package		CodeIgniter
- * @author		EllisLab Dev Team
- * @copyright	Copyright (c) 2008 - 2013, EllisLab, Inc. (http://ellislab.com/)
- * @license		http://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
- * @link		http://codeigniter.com
- * @since		Version 1.0
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @package	CodeIgniter
+ * @author	EllisLab Dev Team
+ * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
+ * @copyright	Copyright (c) 2014, British Columbia Institute of Technology (http://bcit.ca/)
+ * @license	http://opensource.org/licenses/MIT	MIT License
+ * @link	http://codeigniter.com
+ * @since	Version 1.3.0
  * @filesource
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -139,7 +150,7 @@ class CI_DB_postgre_driver extends CI_DB {
 	public function db_connect($persistent = FALSE)
 	{
 		if ($persistent === TRUE
-			&& ($this->conn_id = @pg_pconnect($this->dsn))
+			&& ($this->conn_id = pg_pconnect($this->dsn))
 			&& pg_connection_status($this->conn_id) === PGSQL_CONNECTION_BAD
 			&& pg_ping($this->conn_id) === FALSE
 		)
@@ -148,7 +159,7 @@ class CI_DB_postgre_driver extends CI_DB {
 		}
 		else
 		{
-			$this->conn_id = @pg_connect($this->dsn);
+			$this->conn_id = pg_connect($this->dsn);
 		}
 
 		if ($this->conn_id && ! empty($this->schema))
@@ -157,18 +168,6 @@ class CI_DB_postgre_driver extends CI_DB {
 		}
 
 		return $this->conn_id;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Persistent database connection
-	 *
-	 * @return	resource
-	 */
-	public function db_pconnect()
-	{
-		return $this->db_connect(TRUE);
 	}
 
 	// --------------------------------------------------------------------
@@ -245,7 +244,7 @@ class CI_DB_postgre_driver extends CI_DB {
 	 */
 	protected function _execute($sql)
 	{
-		return @pg_query($this->conn_id, $sql);
+		return pg_query($this->conn_id, $sql);
 	}
 
 	// --------------------------------------------------------------------
@@ -269,7 +268,7 @@ class CI_DB_postgre_driver extends CI_DB {
 		// even if the queries produce a successful result.
 		$this->_trans_failure = ($test_mode === TRUE);
 
-		return (bool) @pg_query($this->conn_id, 'BEGIN');
+		return (bool) pg_query($this->conn_id, 'BEGIN');
 	}
 
 	// --------------------------------------------------------------------
@@ -287,7 +286,7 @@ class CI_DB_postgre_driver extends CI_DB {
 			return TRUE;
 		}
 
-		return (bool) @pg_query($this->conn_id, 'COMMIT');
+		return (bool) pg_query($this->conn_id, 'COMMIT');
 	}
 
 	// --------------------------------------------------------------------
@@ -305,7 +304,20 @@ class CI_DB_postgre_driver extends CI_DB {
 			return TRUE;
 		}
 
-		return (bool) @pg_query($this->conn_id, 'ROLLBACK');
+		return (bool) pg_query($this->conn_id, 'ROLLBACK');
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Determines if a query is a "write" type.
+	 *
+	 * @param	string	An SQL query string
+	 * @return	bool
+	 */
+	public function is_write_type($sql)
+	{
+		return (bool) preg_match('/^\s*"?(SET|INSERT(?![^\)]+\)\s+RETURNING)|UPDATE(?!.*\sRETURNING)|DELETE|CREATE|DROP|TRUNCATE|LOAD|COPY|ALTER|RENAME|GRANT|REVOKE|LOCK|UNLOCK|REINDEX)\s/i', str_replace(array("\r\n", "\r", "\n"), ' ', $sql));
 	}
 
 	// --------------------------------------------------------------------
@@ -318,7 +330,7 @@ class CI_DB_postgre_driver extends CI_DB {
 	 */
 	protected function _escape_str($str)
 	{
-		return pg_escape_string($str);
+		return pg_escape_string($this->conn_id, $str);
 	}
 
 	// --------------------------------------------------------------------
@@ -333,7 +345,11 @@ class CI_DB_postgre_driver extends CI_DB {
 	 */
 	public function escape($str)
 	{
-		if (is_bool($str))
+		if (is_php('5.4.4') && (is_string($str) OR (is_object($str) && method_exists($str, '__toString'))))
+		{
+			return pg_escape_literal($this->conn_id, $str);
+		}
+		elseif (is_bool($str))
 		{
 			return ($str) ? 'TRUE' : 'FALSE';
 		}
@@ -350,7 +366,7 @@ class CI_DB_postgre_driver extends CI_DB {
 	 */
 	public function affected_rows()
 	{
-		return @pg_affected_rows($this->result_id);
+		return pg_affected_rows($this->result_id);
 	}
 
 	// --------------------------------------------------------------------
@@ -499,7 +515,7 @@ class CI_DB_postgre_driver extends CI_DB {
 	 * ORDER BY
 	 *
 	 * @param	string	$orderby
-	 * @param	string	$direction	ASC or DESC
+	 * @param	string	$direction	ASC, DESC or RANDOM
 	 * @param	bool	$escape
 	 * @return	object
 	 */
@@ -627,7 +643,7 @@ class CI_DB_postgre_driver extends CI_DB {
 	 */
 	protected function _close()
 	{
-		@pg_close($this->conn_id);
+		pg_close($this->conn_id);
 	}
 
 }
