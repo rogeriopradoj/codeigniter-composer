@@ -16,7 +16,7 @@ Release Information
 
 This repo contains in development code for future releases. To download the
 latest stable release please visit the `CodeIgniter Downloads
-<http://codeigniter.com/downloads/>`_ page.
+<http://codeigniter.com/download/>`_ page.
 
 **************************
 Changelog and New Features
@@ -50,9 +50,9 @@ Resources
 *********
 
 -  `User Guide <http://codeigniter.com/user_guide/>`_
--  `Community Forums <http://codeigniter.com/forums/>`_
--  `Community Wiki <http://codeigniter.com/wiki/>`_
--  `Community IRC <http://ellislab.com/codeigniter/irc>`_
+-  `Community Forums <http://forum.codeigniter.com/>`_
+-  `Community Wiki <https://github.com/bcit-ci/CodeIgniter/wiki/>`_
+-  `Community IRC <http://www.codeigniter.com/irc>`_
 
 ***************
 Acknowledgement
