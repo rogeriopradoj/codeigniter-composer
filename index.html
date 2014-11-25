@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Codeigniter-composer : A way to install CodeIgniter via composer (rogeriopradoj/codeigniter), if you are looking for the official repo, go to https://github.com/bcit-ci/CodeIgniter">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Codeigniter-composer</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/rogeriopradoj/codeigniter-composer">View on GitHub</a>
+
+          <h1 id="project_title">Codeigniter-composer</h1>
+          <h2 id="project_tagline">A way to install CodeIgniter via composer (rogeriopradoj/codeigniter), if you are looking for the official repo, go to https://github.com/bcit-ci/CodeIgniter</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/rogeriopradoj/codeigniter-composer/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/rogeriopradoj/codeigniter-composer/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p><a href="https://packagist.org/packages/rogeriopradoj/codeigniter"><img src="https://pbs.twimg.com/profile_images/1674038497/logo-mini.png" alt="Packagist link"></a> <a href="https://packagist.org/packages/rogeriopradoj/codeigniter">https://packagist.org/packages/rogeriopradoj/codeigniter</a></p>
+
+<p>Versions: <a href="https://packagist.org/packages/rogeriopradoj/codeigniter"><img src="https://poser.pugx.org/rogeriopradoj/codeigniter/v/stable.png" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/rogeriopradoj/codeigniter"><img src="https://poser.pugx.org/rogeriopradoj/codeigniter/v/unstable.png" alt="Latest Unstable Version"></a></p>
+
+<p>Total: <a href="https://packagist.org/packages/rogeriopradoj/codeigniter"><img src="https://poser.pugx.org/rogeriopradoj/codeigniter/downloads.png" alt="Total Downloads"></a>
+This month: <a href="https://packagist.org/packages/rogeriopradoj/codeigniter"><img src="https://poser.pugx.org/rogeriopradoj/codeigniter/d/monthly.png" alt="Montly Downloads"></a>
+Today: <a href="https://packagist.org/packages/rogeriopradoj/codeigniter"><img src="https://poser.pugx.org/rogeriopradoj/codeigniter/d/daily.png" alt="Daily Downloads"></a></p>
+
+<p><img src="https://raw.github.com/rogeriopradoj/codeigniter-composer/upstream-develop/user_guide_src/source/images/ci_logo_flame.jpg" alt="CodeIgniter"></p>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<h3>
+<a id="install-composer" class="anchor" href="#install-composer" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install composer</h3>
+
+<p>Nothing better than official and easy way. Go to <a href="http://getcomposer.org/doc/00-intro.md#installation">http://getcomposer.org/doc/00-intro.md#installation</a> and follow the instructions there.</p>
+
+<p>Versions for all major operating systems are available (I mean, even Windows ;-) ).</p>
+
+<h3>
+<a id="require-codeigniter-221-rc2-in-2014-11-25" class="anchor" href="#require-codeigniter-221-rc2-in-2014-11-25" aria-hidden="true"><span class="octicon octicon-link"></span></a>Require Codeigniter (2.2.1-rc.2 in 2014-11-25)</h3>
+
+<pre><code> $ composer require "rogeriopradoj/codeigniter 2.2.1-rc.2"
+</code></pre>
+
+<h3>
+<a id="copy-the-application-and-indexphp-out-of-vendor-folder" class="anchor" href="#copy-the-application-and-indexphp-out-of-vendor-folder" aria-hidden="true"><span class="octicon octicon-link"></span></a>Copy the <code>application</code> and <code>index.php</code> out of vendor folder</h3>
+
+<pre><code>$ cp -r vendor/rogeriopradoj/codeigniter/application `pwd`
+$ cp vendor/rogeriopradoj/codeigniter/index.php `pwd`
+</code></pre>
+
+<h3>
+<a id="update-your-front-controller-to-system-folder-from-composer" class="anchor" href="#update-your-front-controller-to-system-folder-from-composer" aria-hidden="true"><span class="octicon octicon-link"></span></a>Update your front controller to system folder from composer</h3>
+
+<pre><code>sed -i "" "s/$system_path = 'system';/$system_path = 'vendor\/rogeriopradoj\/codeigniter\/system';/" index.php
+</code></pre>
+
+<p>That's all!</p>
+
+<h3>
+<a id="note" class="anchor" href="#note" aria-hidden="true"><span class="octicon octicon-link"></span></a>Note</h3>
+
+<p>If you plan to use composer autoload for your other dependencies (I suggest you do it):</p>
+
+<ul>
+<li>edit your front controller (index.php)</li>
+<li>below section CUSTOM CONFIG VALUES, insert</li>
+</ul>
+
+<pre><code>require_once 'vendor/autoload.php';
+</code></pre>
+
+<h2>
+<a id="about-the-tags-releases-and-synchronization-with-official-repo" class="anchor" href="#about-the-tags-releases-and-synchronization-with-official-repo" aria-hidden="true"><span class="octicon octicon-link"></span></a>About the tags, releases and synchronization with official repo</h2>
+
+<p>The official repository of CodeIgniter framework is <a href="https://github.com/bcit-ci/CodeIgniter">https://github.com/bcit-ci/CodeIgniter</a>. However, they don't provide composer installation for 2.x version of the framework. That's why <a href="https://packagist.org/packages/rogeriopradoj/codeigniter">rogeriopradoj/codeigniter</a> was created.</p>
+
+<p>While the official doesn't provide it, this package (rogeriopradoj/codeigniter) will be maintained.</p>
+
+<h3>
+<a id="releases" class="anchor" href="#releases" aria-hidden="true"><span class="octicon octicon-link"></span></a>Releases</h3>
+
+<p>If you want to be cool, you should use one of the tags/releases provided in <a href="https://packagist.org/packages/rogeriopradoj/codeigniter">Packagist</a>, the latest (according to <a href="http://semver.org">SemVer</a>) should be the one I should get.</p>
+
+<p>Tags 2.x.x (no -rc appended) are stable releases created by the official team.</p>
+
+<p>The tags <code>*-rc</code> are that ones that <em>should</em> be released by the official team, but were not (bug fixes that are already in stable branches, but not in master neither git tagged).</p>
+
+<p>I suggest always using latest tag, even it is <code>-rc</code>.</p>
+
+<p>In 2014 December, 25th, the latest tag is <a href="https://packagist.org/packages/rogeriopradoj/codeigniter#2.2.1-rc.2">2.2.1-rc.2</a></p>
+
+<h3>
+<a id="sync-with-official-repo" class="anchor" href="#sync-with-official-repo" aria-hidden="true"><span class="octicon octicon-link"></span></a>Sync with official repo</h3>
+
+<p>The synchronization will be done from time to time. Please open a issue if it gets too much out of sync.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Codeigniter-composer maintained by <a href="https://github.com/rogeriopradoj">rogeriopradoj</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-57095035-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+
+  </body>
+</html>
