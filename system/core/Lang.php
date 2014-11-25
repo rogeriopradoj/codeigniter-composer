@@ -87,6 +87,16 @@ class CI_Lang {
 	 */
 	public function load($langfile, $idiom = '', $return = FALSE, $add_suffix = TRUE, $alt_path = '')
 	{
+		if (is_array($langfile))
+		{
+			foreach ($langfile as $value)
+			{
+				$this->load($value, $idiom, $return, $add_suffix, $alt_path);
+			}
+
+			return;
+		}
+
 		$langfile = str_replace('.php', '', $langfile);
 
 		if ($add_suffix === TRUE)

@@ -133,6 +133,7 @@ Release Date: Not Released
       - Added *colors* configuration to allow customization for the *background*, *border*, *text* and *grid* colors.
       - Added *filename* to the returned array elements.
       - Updated to use `imagepng()` in case that `imagejpeg()` isn't available.
+      - Added **font_size** option to allow customization of font size.
 
    -  :doc:`Text Helper <helpers/text_helper>` changes include:
 
@@ -254,7 +255,7 @@ Release Date: Not Released
       - Added support for passing a custom database object to the loader.
       - Added support for passing custom table attributes (such as ``ENGINE`` for MySQL) to ``create_table()``.
       - Added support for usage of the *FIRST* clause in ``add_column()`` for MySQL and CUBRID.
-      - Added partial support for field columns (MySQL, PostgreSQL, Oracle).
+      - Added partial support for field comments (MySQL, PostgreSQL, Oracle).
       - Deprecated ``add_column()``'s third method. *AFTER* clause should now be added to the field definition array instead.
       - Overall improved support for all of the drivers.
 
@@ -519,6 +520,7 @@ Release Date: Not Released
    -  :doc:`Language Library <libraries/language>` changes include:
 
       -  Changed method ``load()`` to filter the language name with ``ctype_alpha()``.
+      -  Changed method ``load()`` to also accept an array of language files.
       -  Added an optional second parameter to method ``line()`` to disable error logging for line keys that were not found.
       -  Language files are now loaded in a cascading style with the one in **system/** always loaded and overriden afterwards, if another one is found.
 
