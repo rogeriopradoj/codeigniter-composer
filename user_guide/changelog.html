@@ -28,7 +28,7 @@
 <div id="masthead">
 <table cellpadding="0" cellspacing="0" border="0" style="width:100%">
 <tr>
-<td><h1>CodeIgniter User Guide Version 2.2.0</h1></td>
+<td><h1>CodeIgniter User Guide Version 2.2.4</h1></td>
 <td id="breadcrumb_right"><a href="./toc.html">Table of Contents Page</a></td>
 </tr>
 </table>
@@ -44,7 +44,7 @@
 <a href="index.html">User Guide Home</a> &nbsp;&#8250;&nbsp;
 Change Log
 </td>
-<td id="searchbox"><form method="get" action="http://www.google.com/search"><input type="hidden" name="as_sitesearch" id="as_sitesearch" value="ellislab.com/codeigniter/user-guide/" />Search User Guide&nbsp; <input type="text" class="input" style="width:200px;" name="q" id="q" size="31" maxlength="255" value="" />&nbsp;<input type="submit" class="submit" name="sa" value="Go" /></form></td>
+<td id="searchbox"><form method="get" action="http://www.google.com/search"><input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />Search User Guide&nbsp; <input type="text" class="input" style="width:200px;" name="q" id="q" size="31" maxlength="255" value="" />&nbsp;<input type="submit" class="submit" name="sa" value="Go" /></form></td>
 </tr>
 </table>
 <!-- END BREADCRUMB -->
@@ -57,15 +57,70 @@ Change Log
 
 <h1>Change Log</h1>
 
-<h2>Future version</h2>
-<p>Release Date: Unknown</p>
+<h2>Version 2.2.4</h2>
+<p>Release Date: August 20, 2015</p>
+
+<ul>
+	<li><b>Security</b></li>
+		<ul>
+			<li>Fixed an SQL injection vulnerability in <a href="database/active_record.html">Active Record</a> method <samp>offset()</samp>.</li>
+		</ul>
+	</li>
+</ul>
+
+<h2>Version 2.2.3</h2>
+<p>Release Date: July 14, 2015</p>
+
+<ul>
+	<li><b>Security</b></li>
+		<ul>
+			<li>Removed a fallback to <samp>mysql_escape_string()</samp> in the 'mysql' database driver (<samp>escape_str()</samp> method) when there's no active database connection.</li>
+		</ul>
+	</li>
+</ul>
+
+<h2>Version 2.2.2</h2>
+<p>Release Date: April 15, 2015</p>
+
+<ul>
+	<li><b>Security</b></li>
+		<ul>
+			<li>Added HTTP "Host" header character validation to prevent cache poisoning attacks when <kbd>base_url</kbd> auto-detection is used.</li>
+			<li>Added <kbd>FSCommand</kbd> and <kbd>seekSegmentTime</kbd> to the "evil attributes" list in <samp>CI_Security::xss_clean()</samp>.</li>
+		</ul>
+	</li>
+</ul>
+
+<h3>Bug fixes:</h3>
+<ul>
+	<li>Fixed a bug (#3665) - <samp>CI_Security::entity_decode()</samp> triggered warnings under some circumstances.</li>
+</ul>
+
+<h2>Version 2.2.1</h2>
+<p>Release Date: January 22, 2015</p>
+
+<ul>
+	<li>General Changes
+		<ul>
+			<li>Improved security in <kbd>xss_clean()</kbd>.</li>
+			<li>Updated timezones in <a href="helpers/date_helper.html">Date Helper</a>.</li>
+		</ul>
+	</li>
+</ul>
 
 <h3>Bug fixes:</h3>
 <ul>
 	<li>Fixed a bug (#3094) - <samp>CI_Input::_clean_input_data()</samp> breaks encrypted session cookies.</li>
+	<li>Fixed a bug (#2268) - <samp>CI_Security::xss_clean()</samp> didn't properly match JavaScript events.</li>
+	<li>Fixed a bug (#3309) - <samp>CI_Security::xss_clean()</samp> used an overly-invasive pattern to strip JS event handlers.</li>
+	<li>Fixed a bug (#2771) - <samp>CI_Security::xss_clean()</samp> didn't take into account HTML5 entities.</li>
+	<li>Fixed a bug (#73) - <samp>CI_Security::sanitize_filename()</samp> could be tricked by an XSS attack.</li>
+	<li>Fixed a bug (#2681) - <samp>CI_Security::entity_decode()</samp> used the PREG_REPLACE_EVAL flag, which is deprecated since PHP 5.5.</li>
+	<li>Fixed a bug (#3302) - Internal function <samp>get_config()</samp> triggered an E_NOTICE message on PHP 5.6.</li>
 	<li>Fixed a bug (#2508) - <a href="libraries/config.html">Config Library</a> didn't properly detect if the current request is via HTTPS.</li>
 	<li>Fixed a bug (#3314) - SQLSRV <a href="database/index.html">Database driver</a>'s method <samp>count_all()</samp> didn't escape the supplied table name.</li>
-	<li>Fixed a bug (#3309) - <samp>CI_Security::xss_clean()</samp> used an overly-invasive pattern to strip JS event handlers.</li>
+	<li>Fixed a bug (#3404) - MySQLi <a href="database/index.html">Database driver</a>'s method <samp>escape_str()</samp> had a wrong fallback to <samp>mysql_escape_string()</samp> when there was no active connection.</li>
+	<li>Fixed a bug in the <a href="libraries/sessions.html">Session Library</a> where session ID regeneration occurred during AJAX requests.</li>
 </ul>
 
 <h2>Version 2.2.0</h2>
@@ -1344,7 +1399,7 @@ Hg Tag: 1.6.1</p>
 
 <ul>
 <li>Added <a href="./general/hooks.html">Hooks</a> feature, enabling you to tap into and modify the inner workings of the framework without hacking the core files.</li>
-<li>Added the ability to organize controller files <a href="./general/controllers.html">into sub-folders</a>.  Kudos to Marco for <a href="http://codeigniter.com/forums/viewthread/627/">suggesting</a> this (and the next two) feature.</li>
+<li>Added the ability to organize controller files <a href="./general/controllers.html">into sub-folders</a>.  Kudos to Marco for suggesting this (and the next two) feature.</li>
 <li>Added regular expressions support for <a href="./general/routing.html">routing rules</a>.</li>
 <li>Added the ability to <a href="./general/controllers.html">remap function calls</a> within your controllers.</li>
 <li>Added the ability to <a href="./general/core_classes.html">replace core system classes</a> with your own classes.</li>
@@ -1549,7 +1604,7 @@ Previous Topic:&nbsp;&nbsp;<a href="license.html">License Agreement</a>
 <a href="index.html">User Guide Home</a>&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;
 Next Topic:&nbsp;&nbsp;<a href="./general/credits.html">Credits</a>
 </p>
-<p><a href="http://codeigniter.com">CodeIgniter</a> &nbsp;&middot;&nbsp; Copyright &#169; 2006 - 2014 &nbsp;&middot;&nbsp; <a href="http://ellislab.com/">EllisLab, Inc.</a></p>
+<p><a href="http://codeigniter.com">CodeIgniter</a> &nbsp;&middot;&nbsp; Copyright &#169; 2006 - 2014 &nbsp;&middot;&nbsp; <a href="http://ellislab.com/">EllisLab, Inc.</a> &nbsp;&middot;&nbsp; Copyright &#169; 2014 - 2015 &nbsp;&middot;&nbsp; <a href="http://bcit.ca/">British Columbia Institute of Technology</a></p>
 </div>
 
 </body>
