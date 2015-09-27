@@ -68,7 +68,7 @@ $ cp vendor/rogeriopradoj/codeigniter/index.php `pwd`
 <h3>
 <a id="update-your-front-controller-to-system-folder-from-composer" class="anchor" href="#update-your-front-controller-to-system-folder-from-composer" aria-hidden="true"><span class="octicon octicon-link"></span></a>Update your front controller to system folder from composer</h3>
 
-<pre><code>sed -i "" "s/$system_path = 'system';/$system_path = 'vendor\/rogeriopradoj\/codeigniter\/system';/" index.php
+<pre><code>sed -i.bak  "s/$system_path\= 'system';/$system_path\='vendor\/rogeriopradoj\/codeigniter\/system';/" index.php && rm index.php.bak
 </code></pre>
 
 <p>That's all!</p>
