@@ -3,7 +3,7 @@
 <head>
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>The Database Class : CodeIgniter User Guide</title>
+<title>Upgrading from 2.2.4 to 2.2.5 : CodeIgniter User Guide</title>
 
 <style type='text/css' media='all'>@import url('../userguide.css');</style>
 <link rel='stylesheet' type='text/css' media='all' href='../userguide.css' />
@@ -42,13 +42,12 @@
 <td id="breadcrumb">
 <a href="http://codeigniter.com/">CodeIgniter Home</a> &nbsp;&#8250;&nbsp;
 <a href="../index.html">User Guide Home</a> &nbsp;&#8250;&nbsp;
-Database Library
+Upgrading from 2.2.5 to 2.2.6
 </td>
 <td id="searchbox"><form method="get" action="http://www.google.com/search"><input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />Search User Guide&nbsp; <input type="text" class="input" style="width:200px;" name="q" id="q" size="31" maxlength="255" value="" />&nbsp;<input type="submit" class="submit" name="sa" value="Go" /></form></td>
 </tr>
 </table>
 <!-- END BREADCRUMB -->
-
 
 <br clear="all" />
 
@@ -56,29 +55,58 @@ Database Library
 <!-- START CONTENT -->
 <div id="content">
 
+<h1>Upgrading from 2.2.5 to 2.2.6</h1>
 
-<h1>The Database Class</h1>
+<p>Before performing an update you should take your site offline by replacing the index.php file with a static one.</p>
 
-<p>CodeIgniter comes with a full-featured and very fast abstracted database class that supports both traditional
-structures and Active Record patterns. The database functions offer clear, simple syntax.</p>
+<h2>Step 1: Update your CodeIgniter files</h2>
 
-	<ul>
-		<li><a href="examples.html">Quick Start:  Usage Examples</a></li>
-		<li><a href="configuration.html">Database Configuration</a></li>
-		<li><a href="connecting.html">Connecting to a Database</a></li>
-		<li><a href="queries.html">Running Queries</a></li>
-		<li><a href="results.html">Generating Query Results</a></li>
-		<li><a href="helpers.html">Query Helper Functions</a></li>
-		<li><a href="active_record.html">Active Record Class</a></li>
-		<li><a href="transactions.html">Transactions</a></li>
-		<li><a href="table_data.html">Table MetaData</a></li>
-		<li><a href="fields.html">Field MetaData</a></li>
-		<li><a href="call_function.html">Custom Function Calls</a></li>
-		<li><a href="caching.html">Query Caching</a></li>
-		<li><a href="forge.html">Database manipulation with Database Forge</a></li>
-		<li><a href="utilities.html">Database Utilities Class</a></li>
-	</ul>
+<p>Replace all files and directories in your "system" folder and replace your index.php file. If any modifications were made to your index.php they will need to be made fresh in this new one.</p>
 
+<p class="important"><strong>Note:</strong> If you have any custom developed files in these folders please make copies of them first.</p>
+
+<h1>Step 2: Make sure your 'base_url' configuration value is not empty</h1>
+
+<p>When <samp>$config['base_url']</samp> is not set, CodeIgniter tries to automatically
+detect what your website's base URL is. This is done purely for convenience
+when you are starting development of a new application.</p>
+
+<p>Auto-detection is never reliable and also has security implications, which
+is why you should <b>always</b> have it manually configured!</p>
+
+<p>One of the changes in CodeIgniter 2.2.6 is how this auto-detection works,
+and more specifically it now falls back to the server's IP address instead
+of the hostname requested by the client. Therefore, if you've ever relied
+on auto-detection, it will change how your website works now.</p>
+
+<p>In case you need to allow e.g. multiple domains, or both http:// and
+https:// prefixes to be dynamically used depending on the request,
+remember that application/config/config.php is still a PHP script, in
+which you can create this logic with a few lines of code. For example::</p>
+
+<pre>
+	$allowed_domains = array('domain1.tld', 'domain2.tld');
+	$default_domain  = 'domain1.tld';
+
+	if (in_array($_SERVER['HTTP_HOST'], $allowed_domains, TRUE))
+	{
+		$domain = $_SERVER['HTTP_HOST'];
+	}
+	else
+	{
+		$domain = $default_domain;
+	}
+
+	if ( ! empty($_SERVER['HTTPS']))
+	{
+		$config['base_url'] = 'https://'.$domain;
+	}
+	else
+	{
+		$config['base_url'] = 'http://'.$domain;
+	}
+</pre>
+</p>
 
 </div>
 <!-- END CONTENT -->
@@ -86,11 +114,11 @@ structures and Active Record patterns. The database functions offer clear, simpl
 
 <div id="footer">
 <p>
-Previous Topic:&nbsp;&nbsp;<a href="../libraries/caching.html">Caching Class</a>
+Previous Topic:&nbsp;&nbsp;<a href="index.html">Installation Instructions</a>
 &nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;
 <a href="#top">Top of Page</a>&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;
 <a href="../index.html">User Guide Home</a>&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;
-Next Topic:&nbsp;&nbsp;<a href="examples.html">Quick Start: Usage Examples</a>
+Next Topic:&nbsp;&nbsp;<a href="troubleshooting.html">Troubleshooting</a>
 </p>
 <p><a href="http://codeigniter.com">CodeIgniter</a> &nbsp;&middot;&nbsp; Copyright &#169; 2006 - 2014 &nbsp;&middot;&nbsp; <a href="http://ellislab.com/">EllisLab, Inc.</a> &nbsp;&middot;&nbsp; Copyright &#169; 2014 - 2015 &nbsp;&middot;&nbsp; <a href="http://bcit.ca/">British Columbia Institute of Technology</a></p>
 </div>
