@@ -8,17 +8,7 @@
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
-    <link rel="icon" href="images/ico/apple-touch-icon.png" />
-    <link rel="apple-touch-icon" href="images/ico/apple-touch-icon.png">
-
     <title>Codeigniter-composer</title>
-    <script>
-    // https://konklone.com/post/github-pages-now-sorta-supports-https-so-use-it
-    var host = "rogeriopradoj.github.io";
-    if ((host == window.location.host) && (window.location.protocol != "https:")) {
-      window.location.protocol = "https";
-    }
-    </script>
   </head>
 
   <body>
@@ -29,7 +19,7 @@
           <a id="forkme_banner" href="https://github.com/rogeriopradoj/codeigniter-composer">View on GitHub</a>
 
           <h1 id="project_title">Codeigniter-composer</h1>
-          <h2 id="project_tagline">A way to install CodeIgniter via composer (rogeriopradoj/codeigniter), if you are looking for the official repo, go to <a href="https://github.com/bcit-ci/CodeIgniter">https://github.com/bcit-ci/CodeIgniter</a></h2>
+          <h2 id="project_tagline">A way to install CodeIgniter via composer (rogeriopradoj/codeigniter), if you are looking for the official repo, go to https://github.com/bcit-ci/CodeIgniter</h2>
 
             <section id="downloads">
               <a class="zip_download_link" href="https://github.com/rogeriopradoj/codeigniter-composer/zipball/master">Download this project as a .zip file</a>
@@ -41,14 +31,21 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <p><a href="https://packagist.org/packages/rogeriopradoj/codeigniter"><img src="https://packagist.org/bundles/packagistweb/img/logo-small.png" alt="Packagist link"></a> <a href="https://packagist.org/packages/rogeriopradoj/codeigniter">https://packagist.org/packages/rogeriopradoj/codeigniter</a></p>
+        <p><a href="https://packagist.org/packages/rogeriopradoj/codeigniter"><img src="https://pbs.twimg.com/profile_images/1674038497/logo-mini.png" alt="Packagist link"></a> <a href="https://packagist.org/packages/rogeriopradoj/codeigniter">https://packagist.org/packages/rogeriopradoj/codeigniter</a></p>
 
-<p>Versions: <a href="https://packagist.org/packages/rogeriopradoj/codeigniter"><img src="https://poser.pugx.org/rogeriopradoj/codeigniter/v/stable.png" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/rogeriopradoj/codeigniter"><img src="https://poser.pugx.org/rogeriopradoj/codeigniter/v/unstable.png" alt="Latest Unstable Version"></a></p>
+<p>Latest released version: <a href="https://packagist.org/packages/rogeriopradoj/codeigniter"><img src="https://poser.pugx.org/rogeriopradoj/codeigniter/v/stable.png" alt="Latest Stable Version"></a></p>
+
+<p><a href="https://badge.fury.io/ph/rogeriopradoj%2Fcodeigniter"><img src="https://badge.fury.io/ph/rogeriopradoj%2Fcodeigniter.svg" alt="PHP version"></a></p>
+
+<p>Latest unstable <a href="https://packagist.org/packages/rogeriopradoj/codeigniter"><img src="https://poser.pugx.org/rogeriopradoj/codeigniter/v/unstable.png" alt="Latest Unstable Version"></a></p>
 
 <p>Total: <a href="https://packagist.org/packages/rogeriopradoj/codeigniter"><img src="https://poser.pugx.org/rogeriopradoj/codeigniter/downloads.png" alt="Total Downloads"></a>
 This month: <a href="https://packagist.org/packages/rogeriopradoj/codeigniter"><img src="https://poser.pugx.org/rogeriopradoj/codeigniter/d/monthly.png" alt="Montly Downloads"></a>
 Today: <a href="https://packagist.org/packages/rogeriopradoj/codeigniter"><img src="https://poser.pugx.org/rogeriopradoj/codeigniter/d/daily.png" alt="Daily Downloads"></a></p>
+
+<p><a href="https://www.versioneye.com/php/rogeriopradoj:codeigniter/references"><img src="https://www.versioneye.com/php/rogeriopradoj:codeigniter/reference_badge.svg?style=flat" alt="Reference Status"></a>
+<a href="https://packagist.org/packages/rogeriopradoj/codeigniter/dependents"><img src="https://img.shields.io/badge/Dependent_Packages-Packagist-brightgreen.svg" alt="Dependent Packages"></a>
+<a href="https://libraries.io/packagist/rogeriopradoj%2Fcodeigniter/dependent-repositories"><img src="https://img.shields.io/badge/Dependent_Repositories-Libraries.io-orange.svg" alt="Dependent Repositories"></a></p>
 
 <p><img src="https://raw.github.com/rogeriopradoj/codeigniter-composer/upstream-develop/user_guide_src/source/images/ci_logo_flame.jpg" alt="CodeIgniter"></p>
 
@@ -63,9 +60,17 @@ Today: <a href="https://packagist.org/packages/rogeriopradoj/codeigniter"><img s
 <p>Versions for all major operating systems are available (I mean, even Windows ;-) ).</p>
 
 <h3>
-<a id="require-codeigniter-224-in-2015-09-26" class="anchor" href="#require-codeigniter-224-in-2015-09-26" aria-hidden="true"><span class="octicon octicon-link"></span></a>Require Codeigniter (2.2.4 in 2015-09-26)</h3>
+<a id="require-codeigniter-2x-226-in-2016-01-10-" class="anchor" href="#require-codeigniter-2x-226-in-2016-01-10-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Require Codeigniter 2.x (2.2.6 in 2016-01-10) <a href="https://packagist.org/packages/rogeriopradoj/codeigniter#2.2.6"><img src="https://img.shields.io/badge/Version_2.x-2.2.6-blue.svg" alt="Version 2.x"></a>
+</h3>
 
-<pre><code> $ composer require "rogeriopradoj/codeigniter 2.2.4"
+<pre><code> $ composer require rogeriopradoj/codeigniter ^2
+</code></pre>
+
+<h3>
+<a id="or-require-codeigniter-3x-303-in-2016-01-10-" class="anchor" href="#or-require-codeigniter-3x-303-in-2016-01-10-" aria-hidden="true"><span class="octicon octicon-link"></span></a>OR Require Codeigniter 3.x (3.0.3 in 2016-01-10) <a href="https://packagist.org/packages/rogeriopradoj/codeigniter#3.0.3"><img src="https://img.shields.io/badge/Version_3.x-3.0.3-green.svg" alt="Version 2.x"></a>
+</h3>
+
+<pre><code> $ composer require rogeriopradoj/codeigniter ^3
 </code></pre>
 
 <h3>
@@ -78,7 +83,7 @@ $ cp vendor/rogeriopradoj/codeigniter/index.php `pwd`
 <h3>
 <a id="update-your-front-controller-to-system-folder-from-composer" class="anchor" href="#update-your-front-controller-to-system-folder-from-composer" aria-hidden="true"><span class="octicon octicon-link"></span></a>Update your front controller to system folder from composer</h3>
 
-<pre><code>sed -i.bak  "s/$system_path\= 'system';/$system_path\='vendor\/rogeriopradoj\/codeigniter\/system';/" index.php && rm index.php.bak
+<pre><code>sed -i.bak  "s/$system_path\= 'system';/$system_path\='vendor\/rogeriopradoj\/codeigniter\/system';/" index.php &amp;&amp; rm index.php.bak
 </code></pre>
 
 <p>That's all!</p>
@@ -108,18 +113,14 @@ $ cp vendor/rogeriopradoj/codeigniter/index.php `pwd`
 
 <p>If you want to be cool, you should use one of the tags/releases provided in <a href="https://packagist.org/packages/rogeriopradoj/codeigniter">Packagist</a>, the latest (according to <a href="http://semver.org">SemVer</a>) should be the one I should get.</p>
 
-<p>Tags 2.x.x (no -rc appended) are stable releases created by the official team.</p>
-
-<p>The tags <code>*-rc</code> are that ones that <em>should</em> be released by the official team, but were not (bug fixes that are already in stable branches, but not in master neither git tagged).</p>
-
-<p>I suggest always using latest tag, even it is <code>-rc</code>.</p>
-
-<p>In 2015 September, 26th, the latest tag is <a href="https://packagist.org/packages/rogeriopradoj/codeigniter#2.2.4">2.2.4</a></p>
-
 <h3>
 <a id="sync-with-official-repo" class="anchor" href="#sync-with-official-repo" aria-hidden="true"><span class="octicon octicon-link"></span></a>Sync with official repo</h3>
 
 <p>The synchronization will be done from time to time. Please open a issue if it gets too much out of sync.</p>
+
+<p>rogeriopradoj/codeigniter: <a href="https://packagist.org/packages/rogeriopradoj/codeigniter"><img src="https://poser.pugx.org/rogeriopradoj/codeigniter/v/stable.png" alt="Latest Stable Version"></a></p>
+
+<p>codeigniter/framework: <a href="https://packagist.org/packages/codeigniter/framework"><img src="https://poser.pugx.org/codeigniter/framework/v/stable.png" alt="Latest Stable Version"></a></p>
       </section>
     </div>
 
@@ -127,7 +128,7 @@ $ cp vendor/rogeriopradoj/codeigniter/index.php `pwd`
     <div id="footer_wrap" class="outer">
       <footer class="inner">
         <p class="copyright">Codeigniter-composer maintained by <a href="https://github.com/rogeriopradoj">rogeriopradoj</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
 
