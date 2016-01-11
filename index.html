@@ -31,13 +31,11 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <p><a href="https://packagist.org/packages/rogeriopradoj/codeigniter"><img src="https://pbs.twimg.com/profile_images/1674038497/logo-mini.png" alt="Packagist link"></a> <a href="https://packagist.org/packages/rogeriopradoj/codeigniter">https://packagist.org/packages/rogeriopradoj/codeigniter</a></p>
+        <p><a href="https://packagist.org/packages/rogeriopradoj/codeigniter"><img src="https://packagist.org/bundles/packagistweb/img/logo-small.png" alt="Packagist link"></a> <a href="https://packagist.org/packages/rogeriopradoj/codeigniter">https://packagist.org/packages/rogeriopradoj/codeigniter</a></p>
 
-<p>Latest released version: <a href="https://packagist.org/packages/rogeriopradoj/codeigniter"><img src="https://poser.pugx.org/rogeriopradoj/codeigniter/v/stable.png" alt="Latest Stable Version"></a></p>
-
-<p><a href="https://badge.fury.io/ph/rogeriopradoj%2Fcodeigniter"><img src="https://badge.fury.io/ph/rogeriopradoj%2Fcodeigniter.svg" alt="PHP version"></a></p>
-
-<p>Latest unstable <a href="https://packagist.org/packages/rogeriopradoj/codeigniter"><img src="https://poser.pugx.org/rogeriopradoj/codeigniter/v/unstable.png" alt="Latest Unstable Version"></a></p>
+<p><a href="https://packagist.org/packages/rogeriopradoj/codeigniter"><img src="https://poser.pugx.org/rogeriopradoj/codeigniter/v/stable.png" alt="Latest Stable Version"></a>
+<a href="https://badge.fury.io/ph/rogeriopradoj%2Fcodeigniter"><img src="https://badge.fury.io/ph/rogeriopradoj%2Fcodeigniter.svg" alt="PHP version"></a>
+<a href="https://packagist.org/packages/rogeriopradoj/codeigniter"><img src="https://poser.pugx.org/rogeriopradoj/codeigniter/v/unstable.png" alt="Latest Unstable Version"></a></p>
 
 <p>Total: <a href="https://packagist.org/packages/rogeriopradoj/codeigniter"><img src="https://poser.pugx.org/rogeriopradoj/codeigniter/downloads.png" alt="Total Downloads"></a>
 This month: <a href="https://packagist.org/packages/rogeriopradoj/codeigniter"><img src="https://poser.pugx.org/rogeriopradoj/codeigniter/d/monthly.png" alt="Montly Downloads"></a>
@@ -60,17 +58,20 @@ Today: <a href="https://packagist.org/packages/rogeriopradoj/codeigniter"><img s
 <p>Versions for all major operating systems are available (I mean, even Windows ;-) ).</p>
 
 <h3>
-<a id="require-codeigniter-2x-226-in-2016-01-10-" class="anchor" href="#require-codeigniter-2x-226-in-2016-01-10-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Require Codeigniter 2.x (2.2.6 in 2016-01-10) <a href="https://packagist.org/packages/rogeriopradoj/codeigniter#2.2.6"><img src="https://img.shields.io/badge/Version_2.x-2.2.6-blue.svg" alt="Version 2.x"></a>
-</h3>
+<a id="require-codeigniter" class="anchor" href="#require-codeigniter" aria-hidden="true"><span class="octicon octicon-link"></span></a>Require Codeigniter</h3>
 
-<pre><code> $ composer require rogeriopradoj/codeigniter ^2
+<h4>
+<a id="or-2x-226-in-2016-01-10-" class="anchor" href="#or-2x-226-in-2016-01-10-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Or 2.x (2.2.6 in 2016-01-10) <a href="https://packagist.org/packages/rogeriopradoj/codeigniter#2.2.6"><img src="https://img.shields.io/badge/Version_2.x-2.2.6-blue.svg" alt="Version 2.x"></a>
+</h4>
+
+<pre><code>composer require rogeriopradoj/codeigniter ^2
 </code></pre>
 
-<h3>
-<a id="or-require-codeigniter-3x-303-in-2016-01-10-" class="anchor" href="#or-require-codeigniter-3x-303-in-2016-01-10-" aria-hidden="true"><span class="octicon octicon-link"></span></a>OR Require Codeigniter 3.x (3.0.3 in 2016-01-10) <a href="https://packagist.org/packages/rogeriopradoj/codeigniter#3.0.3"><img src="https://img.shields.io/badge/Version_3.x-3.0.3-green.svg" alt="Version 2.x"></a>
-</h3>
+<h4>
+<a id="or-3x-303-in-2016-01-10-" class="anchor" href="#or-3x-303-in-2016-01-10-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Or 3.x (3.0.3 in 2016-01-10) <a href="https://packagist.org/packages/rogeriopradoj/codeigniter#3.0.3"><img src="https://img.shields.io/badge/Version_3.x-3.0.3-green.svg" alt="Version 3.x"></a>
+</h4>
 
-<pre><code> $ composer require rogeriopradoj/codeigniter ^3
+<pre><code>composer require rogeriopradoj/codeigniter ^3
 </code></pre>
 
 <h3>
@@ -83,7 +84,9 @@ $ cp vendor/rogeriopradoj/codeigniter/index.php `pwd`
 <h3>
 <a id="update-your-front-controller-to-system-folder-from-composer" class="anchor" href="#update-your-front-controller-to-system-folder-from-composer" aria-hidden="true"><span class="octicon octicon-link"></span></a>Update your front controller to system folder from composer</h3>
 
-<pre><code>sed -i.bak  "s/$system_path\= 'system';/$system_path\='vendor\/rogeriopradoj\/codeigniter\/system';/" index.php &amp;&amp; rm index.php.bak
+<pre><code>sed -i.bak  "s/$system_path\= 'system';/$system_path\='vendor\/rogeriopradoj\/codeigniter\/system';/" \
+index.php \
+&amp;&amp; rm index.php.bak
 </code></pre>
 
 <p>That's all!</p>
